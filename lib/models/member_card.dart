@@ -1,7 +1,7 @@
 /*
   날짜 : 2025-12-18
   내용 : member_card 모델
-  이름 : 박효빈
+  이름 : 박효빈.
 */
 class MemberCard {
   final int memberCardId;      // 사용자 카드 식별자 (PK): 보유 카드 고유 ID
