@@ -3,28 +3,21 @@ class Member {
   final String pass;
   final String name;
   final String role;
-
   final String engLast;
   final String engFirst;
   final String engname;
-
   final String rrnFront;
   final String rrnBack;
   final String rrn;
-
   final String hp;
   final String email;
-
-  // ✅ 추가 필드
   final DateTime? birth;
   final int? age;
   final String? gender;
   final String? carrier;
-
   final String? zipCode;
   final String? address;
   final String? addressDetail;
-
   final bool hasAccount;
   final String? bank;
   final String? accountNo;
@@ -42,8 +35,6 @@ class Member {
     required this.rrn,
     required this.hp,
     required this.email,
-
-    // ✅ 추가
     this.birth,
     this.age,
     this.gender,
@@ -63,19 +54,14 @@ class Member {
       'pass': pass,
       'name': name,
       'role': role,
-
       'engLast': engLast,
       'engFirst': engFirst,
       'engname': engname,
-
       'rrnFront': rrnFront,
       'rrnBack': rrnBack,
       'rrn': rrn,
-
       'hp': hp,
       'email': email,
-
-      // ✅ 추가
       'birth': birth?.toIso8601String(),
       'age': age,
       'gender': gender,
@@ -83,7 +69,6 @@ class Member {
       'zipCode': zipCode,
       'address': address,
       'addressDetail': addressDetail,
-
       'hasAccount': hasAccount,
       'bank': bank,
       'accountNo': accountNo,
