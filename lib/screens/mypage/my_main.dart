@@ -225,9 +225,9 @@ class _MyMainState extends State<MyMain> {
         children: [
           const Text('받은 혜택', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          _buildBenefitBar('교통', 0.6, '000,000원'),
-          _buildBenefitBar('외식', 0.4, '000,000원'),
-          _buildBenefitBar('여가', 0.2, '000,000원'),
+          _buildBenefitBar('교통', 0.6, '700,000원'),
+          _buildBenefitBar('외식', 0.4, '500,000원'),
+          _buildBenefitBar('여가', 0.2, '200,000원'),
         ],
       ),
     );
