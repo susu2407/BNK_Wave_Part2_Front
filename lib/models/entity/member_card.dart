@@ -4,18 +4,18 @@
   이름 : 박효빈
 */
 class MemberCard {
-  final int memberCardId;      // 사용자 카드 식별자 (PK): 보유 카드 고유 ID
-  final int memberId;          // 사용자 식별자 (FK: TB_MEMBER 연결 키)
-  final int cardId;            // 카드 식별자 (FK: TB_CARD_BASIC 연결 키)
+  final int memberCardId;       // 사용자 카드 식별자 (PK): 보유 카드 고유 ID
+  final int memberId;           // 사용자 식별자 (FK: TB_MEMBER 연결 키)
+  final int cardId;             // 카드 식별자 (FK: TB_CARD_BASIC 연결 키)
 
-  final String cardNumber;     // 카드번호: 마스킹된 형태 (예: 1234-0000-****-****)
+  final String cardNumber;      // 카드번호: 마스킹된 형태 (예: 1234-0000-****-****)
 
-  final DateTime issueDate;    // 발급일: 카드 발급 일자
-  final DateTime expiryDate;   // 카드 유효기간: 만료 예정 일자
+  final DateTime issueDate;     // 발급일: 카드 발급 일자
+  final DateTime expiryDate;    // 카드 유효기간: 만료 예정 일자
 
-  final String cardStatus;     // 카드 상태 (예: 활성, 정지, 해지 등)
+  final String cardStatus;      // 카드 상태 (예: 활성, 정지, 해지 등)
 
-  final int? paymentDay;       // 결제일 (1~31): 명세서상 Null 허용(Y)
+  final int? paymentDay;        // 결제일 (1~31): 명세서상 Null 허용(Y)
   final String? paymentBank;    // 결제 은행: 자동이체 은행명 (Null 허용)
   final String? paymentAccount; // 결제 계좌번호: 자동이체 계좌번호 (Null 허용)
 
@@ -27,9 +27,9 @@ class MemberCard {
     required this.issueDate,
     required this.expiryDate,
     required this.cardStatus,
-    this.paymentDay,     // 명세서 Null 허용에 맞춰 필수(required) 제거
-    this.paymentBank,    // 명세서 Null 허용에 맞춰 필수(required) 제거
-    this.paymentAccount, // 명세서 Null 허용에 맞춰 필수(required) 제거
+    this.paymentDay,          // 명세서 Null 허용에 맞춰 필수(required) 제거
+    this.paymentBank,         // 명세서 Null 허용에 맞춰 필수(required) 제거
+    this.paymentAccount,      // 명세서 Null 허용에 맞춰 필수(required) 제거
   });
 
   /// 서버 JSON 데이터를 Dart 객체로 변환

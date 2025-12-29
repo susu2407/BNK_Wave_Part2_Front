@@ -4,14 +4,14 @@
   이름 : 박효빈
 */
 class CardBasic {
-  final int cardId; //카드 상품의 고유 식별자
-  final String cardName; // 카드명
-  final String bankName; // 은행명
-  final int annualFee;   // 연회비
-  final String cardType;  // 카드 타입 (신용카드, 체크카드 ...)
-  final String cardGrade; // 카드 등급 (일반, 플래티넘 , VIP ... )
+  final int cardId;               //카드 상품의 고유 식별자
+  final String cardName;          // 카드명
+  final String bankName;          // 은행명
+  final int annualFee;            // 연회비
+  final String cardType;          // 카드 타입 (신용카드, 체크카드 ...)
+  final String cardGrade;         // 카드 등급 (일반, 플래티넘 , VIP ... )
   final int minPerformanceAmount; // 최소 전월 실적 금액
-  final String cardImageUrl; // 카드 이미지 경로
+  final String cardImageUrl;      // 카드 이미지 경로
 
   CardBasic({
     required this.cardId,

@@ -4,10 +4,10 @@
   이름 : 박효빈
 */
 class CardHistory {
-  final int transactionId;      // 거래 일련번호 (PK): 결제 거래의 고유 식별자
+  final int transactionId;          // 거래 일련번호 (PK): 결제 거래의 고유 식별자
 
-  final int memberId;           // 사용자 식별자 (FK: TB_MEMBER 연결 키)
-  final int memberCardId;       // 카드 식별자 (FK: TB_MEMBER_CARD 연결 키)
+  final int memberId;               // 사용자 식별자 (FK: TB_MEMBER 연결 키)
+  final int memberCardId;           // 카드 식별자 (FK: TB_MEMBER_CARD 연결 키)
 
   final DateTime approvalDatetime; // 결제 일시: 승인 일자 (TIMESTAMP)
   final int approvalAmount;        // 결제 금액 (NUMBER(10,0))

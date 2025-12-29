@@ -5,7 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
-import '../service/payment/account_service.dart';
+import '../services/payment/account_service.dart'; // 수정된 경로
 
 /// 계좌 등록 및 인증 과정을 관리하는 상태 관리자(Provider)
 class AccountRegistrationProvider extends ChangeNotifier {
@@ -79,7 +79,12 @@ class AccountRegistrationProvider extends ChangeNotifier {
 
     _startLoading();
 
-    // 실제 로직은 Service에 위임
+    // TODO: 실제 API 호출을 위해 Service의 accountRegister 함수를 사용해야 합니다.
+    // 이 부분은 최종적으로 MemberCard 객체를 만들어서 전달해야 합니다.
+    // final memberCard = MemberCard(paymentBank: _paymentBank!, paymentAccount: _paymentAccountNumber!, ...);
+    // final result = await _accountService.accountRegister(memberCard);
+
+    // 현재는 Mock 로직만 연결
     final success = await _accountService.registerAccount(
       bank: _paymentBank!,
       accountNumber: _paymentAccountNumber!,

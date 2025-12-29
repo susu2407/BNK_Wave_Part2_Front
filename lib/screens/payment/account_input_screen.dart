@@ -5,7 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
-import '../../models/dto/card_view_dto.dart';
+import '../../models/dto/account_dto.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -190,6 +190,8 @@ class _PaymentRegisterScreenState extends State<PaymentRegisterScreen> {
           backgroundColor: Colors.red
         ),
         child: const Text("다음", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+        // 버튼
+        // 버튼 클릭시 service의 accountRegister 실행
       ),
     );
   }
