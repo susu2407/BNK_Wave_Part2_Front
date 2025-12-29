@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'benefit_summary_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -162,10 +163,21 @@ class _BenefitMonthScreenState extends State<BenefitMonthScreen> {
                     ),
                     const SizedBox(height: 22),
                     _BenefitRow(
-                      title: '국내 가맹점 1% 결제일할인',
+                      title: '국내 가맹점 1% 결제일할인1',
                       subtitle: ' ',
                       amountText: '연 0원',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BenefitDetailScreen(
+                              benefitTitle: '국내 가맹점 1% 결제일할인1',
+                              yearAmountText: '연 0원',
+                              monthAmountText: '0원',
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 14),
 
