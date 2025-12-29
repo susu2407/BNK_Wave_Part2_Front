@@ -163,8 +163,8 @@ class _BenefitMonthScreenState extends State<BenefitMonthScreen> {
                     ),
                     const SizedBox(height: 22),
                     _BenefitRow(
-                      title: '국내 가맹점 1% 결제일할인1',
-                      subtitle: ' ',
+                      title: '스타벅스/커피빈',
+                      subtitle: '10% 할인',
                       amountText: '연 0원',
                       onTap: () {
                         Navigator.push(
@@ -182,15 +182,15 @@ class _BenefitMonthScreenState extends State<BenefitMonthScreen> {
                     const SizedBox(height: 14),
 
                     _BenefitRow(
-                      title: '온라인 간편결제/커피전문점/해외',
-                      subtitle: '1.5% 결제일할인',
+                      title: '온라인 간편결제',
+                      subtitle: '5% 할인',
                       amountText: '0원',
                       onTap: () {},
                     ),
                     const SizedBox(height: 14),
 
                     _BenefitRow(
-                      title: '사업장 운영 경비 1.5%',
+                      title: 'OTT 서비스 월 30% 할인',
                       subtitle: '결제일할인',
                       amountText: '연 0원',
                       onTap: () {},
