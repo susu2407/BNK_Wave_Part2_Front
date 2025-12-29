@@ -6,7 +6,6 @@
 
 import 'package:flutter/material.dart';
 import '../../models/dto/card_view_dto.dart';
-import '../models/dto/card_view_dto.dart';
 
 void main() {
   runApp(MaterialApp(
