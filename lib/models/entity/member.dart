@@ -1,77 +1,72 @@
 class Member {
-  final String usid;
-  final String pass;
-  final String name;
-  final String role;
-  final String engLast;
-  final String engFirst;
-  final String engname;
-  final String rrnFront;
-  final String rrnBack;
-  final String rrn;
-  final String hp;
-  final String email;
-  final DateTime? birth;
-  final int? age;
-  final String? gender;
-  final String? carrier;
-  final String? zipCode;
-  final String? address;
-  final String? addressDetail;
-  final bool hasAccount;
-  final String? bank;
-  final String? accountNo;
+  final int? memberId;
+
+  final String loginId;        // LOGIN_ID
+  final String password;       // PASSWORD
+  final String memberName;     // MEMBER_NAME
+  final String lastNameEn;     // LAST_NAME_EN
+  final String firstNameEn;    // FIRST_NAME_EN
+  final DateTime birth;        // BIRTH
+  final String rrn;            // RRN
+  final String gender;         // GENDER (M/F)
+  final String phoneNumber;    // PHONE_NUMBER
+  final String mobileCarrier;  // MOBILE_CARRIER
+
+  // 선택 정보
+  final int? age;              // AGE
+  final String? ageGroup;      // AGE_GROUP
+  final String? email;         // EMAIL
+  final String? postalCode;    // POSTAL_CODE
+  final String? address;       // ADDRESS
+  final String? addressDetail; // ADDRESS_DETAIL
+
+  // 시스템 컬럼
+  final DateTime? createdAt;   // CREATED_AT
+  final String memberStatus;   // MEMBER_STATUS
 
   Member({
-    required this.usid,
-    required this.pass,
-    required this.name,
-    required this.role,
-    required this.engLast,
-    required this.engFirst,
-    required this.engname,
-    required this.rrnFront,
-    required this.rrnBack,
+    this.memberId,
+    required this.loginId,
+    required this.password,
+    required this.memberName,
+    required this.lastNameEn,
+    required this.firstNameEn,
+    required this.birth,
     required this.rrn,
-    required this.hp,
-    required this.email,
-    this.birth,
+    required this.gender,
+    required this.phoneNumber,
+    required this.mobileCarrier,
     this.age,
-    this.gender,
-    this.carrier,
-    this.zipCode,
+    this.ageGroup,
+    this.email,
+    this.postalCode,
     this.address,
     this.addressDetail,
-
-    required this.hasAccount,
-    this.bank,
-    this.accountNo,
+    this.createdAt,
+    required this.memberStatus,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'usid': usid,
-      'pass': pass,
-      'name': name,
-      'role': role,
-      'engLast': engLast,
-      'engFirst': engFirst,
-      'engname': engname,
-      'rrnFront': rrnFront,
-      'rrnBack': rrnBack,
+      'memberId': memberId,
+      'loginId': loginId,
+      'password': password,
+      'memberName': memberName,
+      'lastNameEn': lastNameEn,
+      'firstNameEn': firstNameEn,
+      'birth': birth.toIso8601String(),
       'rrn': rrn,
-      'hp': hp,
-      'email': email,
-      'birth': birth?.toIso8601String(),
-      'age': age,
       'gender': gender,
-      'carrier': carrier,
-      'zipCode': zipCode,
+      'phoneNumber': phoneNumber,
+      'mobileCarrier': mobileCarrier,
+      'age': age,
+      'ageGroup': ageGroup,
+      'email': email,
+      'postalCode': postalCode,
       'address': address,
       'addressDetail': addressDetail,
-      'hasAccount': hasAccount,
-      'bank': bank,
-      'accountNo': accountNo,
+      'createdAt': createdAt?.toIso8601String(),
+      'memberStatus': memberStatus,
     };
   }
 }

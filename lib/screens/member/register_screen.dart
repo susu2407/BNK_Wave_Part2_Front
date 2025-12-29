@@ -1,10 +1,9 @@
 import 'dart:developer';
-import 'package:bnkpart2/main.dart';
 import 'package:flutter/material.dart';
+import 'package:bnkpart2/main.dart';
 
 import '../../models/entity/member.dart';
 import '../../services/member_service.dart';
-import 'CardAccountRegisterPage_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -24,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
    * 기본 정보
    * ───────────────────────────────── */
   final _nameController = TextEditingController();
-  final _usidController = TextEditingController();
+  final _loginIdController = TextEditingController();
   final _pass1Controller = TextEditingController();
   final _pass2Controller = TextEditingController();
 
@@ -43,7 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   /* ─────────────────────────────────
    * 연락처
    * ───────────────────────────────── */
-  final _hpController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
 
   /* ─────────────────────────────────
@@ -53,23 +52,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _ageController = TextEditingController();
   String _gender = 'M';
 
-  // 통신사
+  /* ─────────────────────────────────
+   * 통신사
+   * ───────────────────────────────── */
   bool _carrierExpanded = false;
   String? _selectedCarrier;
-
-  /* ─────────────────────────────────
-   * 주소
-   * ───────────────────────────────── */
-  final _zipCodeController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _addressDetailController = TextEditingController();
-
-  /* ─────────────────────────────────
-   * 계좌
-   * ───────────────────────────────── */
-  bool _hasAccount = false;
-  final _bankController = TextEditingController();
-  final _accountController = TextEditingController();
 
   final List<String> carriers = [
     'KT',
@@ -80,6 +67,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'LGU알뜰폰',
   ];
 
+  /* ─────────────────────────────────
+   * 주소
+   * ───────────────────────────────── */
+  final _postalCodeController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _addressDetailController = TextEditingController();
+
   final _service = MemberService();
 
   /* ─────────────────────────────────
@@ -87,37 +81,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
    * ───────────────────────────────── */
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_birthDate == null || _selectedCarrier == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('필수 항목을 모두 입력하세요')),
+      );
+      return;
+    }
 
     final member = Member(
-      usid: _usidController.text,
-      pass: _pass1Controller.text,
-      name: _nameController.text,
-      role: 'USER',
+      loginId: _loginIdController.text,
+      password: _pass1Controller.text,
+      memberName: _nameController.text,
 
-      engLast: _engLastNameController.text,
-      engFirst: _engFirstNameController.text,
-      engname:
-      '${_engLastNameController.text} ${_engFirstNameController.text}',
+      lastNameEn: _engLastNameController.text,
+      firstNameEn: _engFirstNameController.text,
 
-      rrnFront: _rrnFrontController.text,
-      rrnBack: _rrnBackController.text,
+      birth: _birthDate!,
       rrn: '${_rrnFrontController.text}-${_rrnBackController.text}',
-
-      birth: _birthDate,
-      age: int.tryParse(_ageController.text),
       gender: _gender,
-      carrier: _selectedCarrier,
+      phoneNumber: _phoneController.text,
+      mobileCarrier: _selectedCarrier!,
 
-      zipCode: _zipCodeController.text,
+      age: int.tryParse(_ageController.text),
+      email: _emailController.text.isEmpty ? null : _emailController.text,
+      postalCode: _postalCodeController.text,
       address: _addressController.text,
       addressDetail: _addressDetailController.text,
 
-      hp: _hpController.text,
-      email: _emailController.text,
-
-      hasAccount: _hasAccount,
-      bank: _hasAccount ? _bankController.text : null,
-      accountNo: _hasAccount ? _accountController.text : null,
+      memberStatus: 'ACTIVE',
     );
 
     log('member json: ${member.toJson()}');
@@ -129,17 +120,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('회원가입 완료')));
 
-      if (!_hasAccount) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const CardAccountRegisterPage()),
-        );
-        return;
-      }
-
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const MyHomePage(title: "BNK WAVE")),
+        MaterialPageRoute(builder: (_) => const MyHomePage(title: 'BNK WAVE')),
             (_) => false,
       );
     } catch (e) {
@@ -164,10 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               _sectionTitle('기본 정보'),
               _input(_nameController, '이름'),
-              _input(_usidController, '아이디'),
+              _input(_loginIdController, '아이디'),
               _input(_pass1Controller, '비밀번호', obscure: true),
               _input(_pass2Controller, '비밀번호 확인', obscure: true),
 
@@ -179,7 +161,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 children: [
                   Expanded(
-                    flex: 5,
                     child: _input(
                       _rrnFrontController,
                       '앞 6자리',
@@ -188,7 +169,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    flex: 6,
                     child: _input(
                       _rrnBackController,
                       '뒤 7자리',
@@ -200,32 +180,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               _sectionTitle('연락처'),
-              _carrierSelector(), // ✅ 통신사 위치 이동
-              _input(_hpController, '휴대폰 번호'),
+              _carrierSelector(),
+              _input(_phoneController, '휴대폰 번호'),
               _input(_emailController, '이메일'),
 
               _sectionTitle('추가 정보'),
               _birthPicker(),
-              _input(_ageController, '나이',
-                  keyboard: TextInputType.number),
+              _input(_ageController, '나이', keyboard: TextInputType.number),
               _genderDropdown(),
 
               _sectionTitle('주소'),
-              _input(_zipCodeController, '우편번호'),
+              _input(_postalCodeController, '우편번호'),
               _input(_addressController, '주소'),
               _input(_addressDetailController, '상세주소'),
-
-              _sectionTitle('계좌 정보'),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('계좌 보유'),
-                value: _hasAccount,
-                onChanged: (v) => setState(() => _hasAccount = v),
-              ),
-              if (_hasAccount) ...[
-                _input(_bankController, '은행명'),
-                _input(_accountController, '계좌번호'),
-              ],
 
               const SizedBox(height: 30),
               Center(
@@ -293,9 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             if (d != null) setState(() => _birthDate = d);
           },
           child: InputDecorator(
-            decoration: const InputDecoration(
-              border: const OutlineInputBorder(),
-            ),
+            decoration: const InputDecoration(border: OutlineInputBorder()),
             child: Text(
               _birthDate == null
                   ? '선택'
@@ -326,21 +291,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           onTap: () =>
               setState(() => _carrierExpanded = !_carrierExpanded),
           child: InputDecorator(
-            decoration:
-            const InputDecoration(labelText: '통신사'),
+            decoration: const InputDecoration(labelText: '통신사'),
             child: Text(_selectedCarrier ?? '선택'),
           ),
         ),
         if (_carrierExpanded)
-          ...carriers.map((c) => ListTile(
-            title: Text(c),
-            onTap: () {
-              setState(() {
-                _selectedCarrier = c;
-                _carrierExpanded = false;
-              });
-            },
-          )),
+          ...carriers.map(
+                (c) => ListTile(
+              title: Text(c),
+              onTap: () {
+                setState(() {
+                  _selectedCarrier = c;
+                  _carrierExpanded = false;
+                });
+              },
+            ),
+          ),
       ],
     );
   }
@@ -352,21 +318,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _scrollController.dispose();
     _nameController.dispose();
-    _usidController.dispose();
+    _loginIdController.dispose();
     _pass1Controller.dispose();
     _pass2Controller.dispose();
     _engLastNameController.dispose();
     _engFirstNameController.dispose();
     _rrnFrontController.dispose();
     _rrnBackController.dispose();
-    _hpController.dispose();
+    _phoneController.dispose();
     _emailController.dispose();
     _ageController.dispose();
-    _zipCodeController.dispose();
+    _postalCodeController.dispose();
     _addressController.dispose();
     _addressDetailController.dispose();
-    _bankController.dispose();
-    _accountController.dispose();
     super.dispose();
   }
 }
