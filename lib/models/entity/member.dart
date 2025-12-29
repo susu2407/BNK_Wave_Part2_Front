@@ -1,3 +1,9 @@
+/*
+  날짜 : 2025-12-17
+  내용 : Member 테이블
+  이름 : 이수연
+*/
+
 class Member {
   final int memberId;           // 사용자 식별자
   final String loginId;         // 로그인 아이디

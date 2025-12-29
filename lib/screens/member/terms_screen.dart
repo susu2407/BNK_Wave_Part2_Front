@@ -118,12 +118,12 @@ class _TermsScreenState extends State<TermsScreen>
               child: ElevatedButton(
                 onPressed: (_termsService && _termsPrivacy)
                     ? () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RegisterScreen(),
-                    ),
-                  );
+                  //Navigator.pushReplacement(
+                    //context,
+                    //MaterialPageRoute(
+                      //builder: (_) => const RegisterScreen(),
+                    //),
+                  //);
                 }
                     : null,
                 child: const Text('동의하고 회원가입 계속'),
