@@ -162,7 +162,7 @@ class _BenefitMonthScreenState extends State<BenefitMonthScreen> {
                     ),
                     const SizedBox(height: 22),
                     _BenefitRow(
-                      title: '국내 가맹점 1% 결제일할인',
+                      title: '국내 가맹점 1% 결제일할인1',
                       subtitle: ' ',
                       amountText: '연 0원',
                       onTap: () {},
