@@ -4,4 +4,6 @@
   이름 :
 */
 
-class AuthProvider {}
+class AuthProvider {
+  void login(String accessToken) {}
+}
