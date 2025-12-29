@@ -96,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       lastNameEn: _engLastNameController.text,
       firstNameEn: _engFirstNameController.text,
 
-      birth: _birthDate!,
+      birthDate: _birthDate!,
       rrn: '${_rrnFrontController.text}-${_rrnBackController.text}',
       gender: _gender,
       phoneNumber: _phoneController.text,
@@ -274,7 +274,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _genderDropdown() {
     return DropdownButtonFormField<String>(
-      value: _gender,
+      initialValue: _gender,
       decoration: const InputDecoration(labelText: '성별'),
       items: const [
         DropdownMenuItem(value: 'M', child: Text('남')),
