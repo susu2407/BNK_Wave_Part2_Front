@@ -1,11 +1,5 @@
-/*
-  날짜 : 2025-12-17
-  내용 : Member 테이블
-  이름 : 이수연
-*/
-
 class Member {
-  final int memberId;           // 사용자 식별자
+  final int? memberId;           // 사용자 식별자
   final String loginId;         // 로그인 아이디
   final String password;        // 비밀번호 (암호화된 상태)
   final String memberName;      // 사용자 이름
@@ -22,11 +16,11 @@ class Member {
   final String? postalCode;     // 우편번호
   final String? address;        // 주소
   final String? addressDetail;  // 상세주소
-  final DateTime createdAt;     // 가입일시
+  final DateTime? createdAt;     // 가입일시
   final String memberStatus;    // 회원 상태
 
   Member({
-    required this.memberId,
+    this.memberId,
     required this.loginId,
     required this.password,
     required this.memberName,
@@ -43,7 +37,7 @@ class Member {
     this.postalCode,
     this.address,
     this.addressDetail,
-    required this.createdAt,
+    this.createdAt,
     required this.memberStatus,
   });
 
@@ -55,7 +49,7 @@ class Member {
       password: json['PASSWORD'] as String,
       memberName: json['MEMBER_NAME'] as String,
       lastNameEn: json['LAST_NAME_EN'] as String,
-      firstNameEn: json['FIRST_NAME_ENV'] as String,
+      firstNameEn: json['FIRST_NAME_EN'] as String,
       birthDate: DateTime.parse(json['BIRTHDATE']),
       rrn: json['RRN'] as String,
       age: json['AGE'] as int?,
@@ -80,7 +74,7 @@ class Member {
       'PASSWORD': password,
       'MEMBER_NAME': memberName,
       'LAST_NAME_EN': lastNameEn,
-      'FIRST_NAME_ENV': firstNameEn,
+      'FIRST_NAME_EN': firstNameEn,
       'BIRTHDATE': birthDate.toIso8601String(),
       'RRN': rrn,
       'AGE': age,
@@ -92,7 +86,7 @@ class Member {
       'POSTAL_CODE': postalCode,
       'ADDRESS': address,
       'ADDRESS_DETAIL': addressDetail,
-      'CREATED_AT': createdAt.toIso8601String(),
+      'CREATED_AT': createdAt?.toIso8601String(),
       'MEMBER_STATUS': memberStatus,
     };
   }
