@@ -19,18 +19,6 @@ class CardViewDto {
     required this.member,
   });
 
-  // [핵심 가공 로직] 카드명 + 계좌번호 조합
-  String get displayTitle => basic.cardName;
-
-  // [핵심 가공 로직] 타입 | 카드번호 앞 4자리
-  String get displaySubTitle {
-    final type = basic.cardType; // 신용/체크
-    final shortNo = member.cardNumber.length >= 4
-        ? member.cardNumber.substring(0, 4)
-        : "****";
-    return "$type | $shortNo";
-  }
-
   // [식별자] 카드 고유 ID (PK)
   int get cardId => basic.cardId;
 
