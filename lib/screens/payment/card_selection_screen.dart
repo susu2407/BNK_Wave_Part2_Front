@@ -1,8 +1,18 @@
 /*
   날짜 : 2025-12-18
-  내용 : 계좌 등록/수정할 카드 선택 화면
   이름 : 이수연
+  내용 : 계좌 등록/수정할 카드 선택 화면 - 1
+
+  - 보유 카드 목록 보이기
+  - 카드 타입(신용/체크)에 맞게 카드 목록 불러오기
+  - 불러온 카드 중 카드 선택 시 카드 리스트 테두리에 강조색 넣어서, 무엇을 선택했는지 시각적으로 보이기
+  - 카드 선택 시 하단의 '다음' 버튼 활성화
+  - 다음 버튼 눌렀을 때에 -> 선택한 카드에 연결된 계좌 정보를 등록/수정 할 수 있도록 '선택한 카드 정보' 넘기기
+  - 다음 버튼 눌렀을 때에, 계좌 입력 화면(account_input_screen)으로 이동
+
 */
+import 'package:bnkpart2/models/dto/account_dto.dart';
+import 'package:bnkpart2/screens/payment/card_account_input_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,29 +34,36 @@ class PaymentAccountChangeScreen extends StatefulWidget {
 class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen> {
   int _selectedTab = 0; // 0: 신용, 1: 체크
   int? _selectedCardId; // 테이블의 PK인 MEMBER_CARD_ID를 저장
-  // int? _selectedCardIndex; // 선택된 카드 인덱스
 
-  // 1. [데이터] DB 명세서를 기반으로 한 가상 데이터 리스트
+  // 1. [데이터] 다음 화면(DTO)에 필요한 정보를 포함하도록 데이터 보강
   final List<Map<String, dynamic>> _myCardList = [
     {
       'MEMBER_CARD_ID': 1,
+      'CARD_NAME': 'BNK부산은행 Rex카드',
+      'CARD_TYPE': '신용',
       'CARD_NUMBER': '1234-5678-9012-3456',
       'PAYMENT_BANK': '신한은행',
       'PAYMENT_ACCOUNT': '110-123-456789',
+      'CARD_IMAGE_URL': 'https://api.lorem.space/image/creditcard?w=400&h=250&hash=A1B2C3D4',
     },
     {
       'MEMBER_CARD_ID': 2,
+      'CARD_NAME': 'BNK부산은행 체크카드',
+      'CARD_TYPE': '체크',
       'CARD_NUMBER': '5555-4444-3333-2222',
       'PAYMENT_BANK': '국민은행',
       'PAYMENT_ACCOUNT': '4567-02-12345',
+      'CARD_IMAGE_URL': 'https://api.lorem.space/image/creditcard?w=400&h=250&hash=B2C3D4E5',
     },
     {
       'MEMBER_CARD_ID': 3,
+      'CARD_NAME': 'BNK부산은행 Rex카드',
+      'CARD_TYPE': '신용',
       'CARD_NUMBER': '9999-0000-1111-2222',
-      'PAYMENT_BANK': '우리은행',
-      'PAYMENT_ACCOUNT': '1002-987-654321',
+      'PAYMENT_BANK': null,
+      'PAYMENT_ACCOUNT': null,
+      'CARD_IMAGE_URL': 'https://api.lorem.space/image/creditcard?w=400&h=250&hash=C3D4E5F6',
     },
-    // 리스트가 길어져도 스크롤 테스트가 가능하도록 추가 가능
   ];
 
   @override
@@ -110,11 +127,10 @@ class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutCubic,
-        // 선택 시 살짝 커지는 효과
+        margin: const EdgeInsets.only(bottom: 16),
         transform: isSelected ? (Matrix4.identity()..scale(1.02)) : Matrix4.identity(),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          // 선택 시 배경색을 완전히 채움 (브랜드 컬러 등)
           color: isSelected ? const Color(0xFF1A1A1A) : const Color(0xFFF5F5F5),
           borderRadius: BorderRadius.circular(20),
         ),
@@ -125,7 +141,7 @@ class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '[] | [$displayId]',
+                    '${cardData['CARD_TYPE']} | $displayId',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -133,11 +149,21 @@ class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen>
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // [수정] 계좌 등록 여부에 따라 다른 텍스트 표시
                   Text(
-                    '${cardData['PAYMENT_BANK']} ${cardData['PAYMENT_ACCOUNT']}',
+                    (cardData['PAYMENT_BANK'] != null && cardData['PAYMENT_ACCOUNT'] != null)
+                        ? '${cardData['PAYMENT_BANK']} ${cardData['PAYMENT_ACCOUNT']}'
+                        : '결제 계좌를 등록해주세요.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: isSelected ? Colors.white70 : Colors.black45,
+                      color: isSelected
+                          ? Colors.white70
+                          : ((cardData['PAYMENT_BANK'] != null)
+                              ? Colors.black45
+                              : Colors.black45),
+                      fontWeight: (cardData['PAYMENT_BANK'] != null)
+                          ? FontWeight.normal
+                          : FontWeight.w600,
                     ),
                   ),
                 ],
@@ -209,14 +235,17 @@ class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen>
 
   // 안내 문구 섹션
   Widget _buildNoticeSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _noticeRow('청구방식이 통합된 경우, 결제정보는 하나로 보관됩니다.'),
-        _noticeRow('점검 시간(23:30~00:00)에는 서비스 이용이 제한될 수 있습니다.'),
-        const SizedBox(height: 30),
-        const Text('기타 안내', style: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold)),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          _noticeRow('청구방식이 통합된 경우, 결제정보는 하나로 보관됩니다.'),
+          _noticeRow('점검 시간(23:30~00:00)에는 서비스 이용이 제한될 수 있습니다.'),
+          const SizedBox(height: 30),
+        ],
+      ),
     );
   }
 
@@ -235,14 +264,43 @@ class _PaymentAccountChangeScreenState extends State<PaymentAccountChangeScreen>
         width: double.infinity,
         height: 58,
         child: ElevatedButton(
-          onPressed: _selectedCardId != null ? () {} : null,
+          // [수정] onPressed 로직 구현
+          onPressed: _selectedCardId != null
+              ? () {
+                  // 1. 선택된 카드 데이터 찾기
+                  final selectedCardData = _myCardList.firstWhere(
+                    (card) => card['MEMBER_CARD_ID'] == _selectedCardId,
+                    orElse: () => {}, // 없으면 빈 맵 반환
+                  );
+
+                  // 데이터가 없으면 아무것도 하지 않음 (안전 장치)
+                  if (selectedCardData.isEmpty) return;
+
+                  // 2. 다음 화면으로 전달할 DTO 생성
+                  final dto = AccountInputDto(
+                    cardId: selectedCardData['MEMBER_CARD_ID'],
+                    cardName: selectedCardData['CARD_NAME'],
+                    bankName: selectedCardData['PAYMENT_BANK'] ?? "은행 정보 없음",
+                    cardImageUrl: selectedCardData['CARD_IMAGE_URL'],
+                  );
+
+                  // 3. 계좌 입력 화면으로 이동하면서 DTO 전달
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CardAccountInputScreen(selectedCard: dto),
+                    ),
+                  );
+                }
+              : null, // 카드가 선택되지 않으면 버튼 비활성화
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.deepOrange,
             disabledBackgroundColor: Colors.grey.shade300,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 0,
           ),
-          child: const Text('변경하기', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+          child: const Text('다음', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
         ),
       ),
     );

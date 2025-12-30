@@ -1,16 +1,13 @@
 /*
-  날짜 : 2025-12-29
+  날짜 : 2025-12-24
   이름 : 이수연
-  내용 : 계좌 등록 화면의 상태를 관리하고, 실제 로직은 Service에 위임합니다.
+  내용 : 계좌 등록 화면의 상태 관리 (약관 동의 기능 추가)
 */
 
 import 'package:flutter/material.dart';
-import '../services/payment/account_service.dart'; // 수정된 경로
+import '../services/payment/account_service.dart';
 
-/// 계좌 등록 및 인증 과정을 관리하는 상태 관리자(Provider)
 class AccountRegistrationProvider extends ChangeNotifier {
-
-  // 의존성 주입: 실제 로직을 처리할 서비스
   final AccountService _accountService = AccountService();
 
   // 1. 상태(State): 이 화면에서 관리해야 할 모든 데이터
@@ -21,15 +18,20 @@ class AccountRegistrationProvider extends ChangeNotifier {
 
   String? _paymentAccountNumber;
   String? get paymentAccountNumber => _paymentAccountNumber;
-  
-  String? _verificationCode; // Service로부터 받은 인증 코드
+
+  String? _verificationCode;
 
   bool _isAccountVerified = false;
   bool get isAccountVerified => _isAccountVerified;
 
+  bool _agreedToPersonal = false;
+  bool get agreedToPersonal => _agreedToPersonal;
+
+  bool _agreedToThirdParty = false;
+  bool get agreedToThirdParty => _agreedToThirdParty;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-
 
   // 2. 로직(Logic): UI 상태 변경 및 Service 호출
   // =======================================================
@@ -44,20 +46,24 @@ class AccountRegistrationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// '인증번호 받기' 버튼 로직
+  void setAgreement(String type, bool value) {
+    if (type == 'personal') {
+      _agreedToPersonal = value;
+    } else if (type == 'thirdParty') {
+      _agreedToThirdParty = value;
+    }
+    notifyListeners();
+  }
+
   Future<void> requestVerificationCode() async {
     if (_paymentAccountNumber == null || _paymentAccountNumber!.isEmpty) return;
 
     _startLoading();
-
-    // 실제 로직은 Service에 위임
     _verificationCode = await _accountService.requestVerificationCode(_paymentAccountNumber!);
     print("Provider: Service로부터 인증 코드 [$_verificationCode]를 받았습니다.");
-    
     _finishLoading();
   }
 
-  /// '확인' 버튼을 눌러 인증번호 제출
   bool submitVerificationCode(String userInputCode) {
     if (userInputCode == _verificationCode) {
       _isAccountVerified = true;
@@ -70,7 +76,6 @@ class AccountRegistrationProvider extends ChangeNotifier {
     }
   }
 
-  /// 최종 '등록하기' 버튼 로직
   Future<bool> registerAccount() async {
     if (!_isAccountVerified) {
       print("Provider: 계좌 인증이 완료되지 않았습니다.");
@@ -79,19 +84,12 @@ class AccountRegistrationProvider extends ChangeNotifier {
 
     _startLoading();
 
-    // TODO: 실제 API 호출을 위해 Service의 accountRegister 함수를 사용해야 합니다.
-    // 이 부분은 최종적으로 MemberCard 객체를 만들어서 전달해야 합니다.
-    // final memberCard = MemberCard(paymentBank: _paymentBank!, paymentAccount: _paymentAccountNumber!, ...);
-    // final result = await _accountService.accountRegister(memberCard);
-
-    // 현재는 Mock 로직만 연결
     final success = await _accountService.registerAccount(
       bank: _paymentBank!,
       accountNumber: _paymentAccountNumber!,
     );
 
     _finishLoading();
-    
     return success;
   }
 

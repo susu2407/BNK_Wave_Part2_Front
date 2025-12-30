@@ -27,15 +27,20 @@ class AccountService {
   }
 
   /// [Mock API] 1원 이체 인증번호 요청을 흉내 냅니다.
-  ///
-  /// 실제 앱에서는 이 부분에서 서버 API를 호출해야 하지만,
-  /// 여기서는 요청을 흉내 내고, 성공 시 고정된 코드 '1234'를 반환합니다.
   Future<String?> requestVerificationCode(String accountNumber) async {
-    // API 통신을 흉내 내기 위한 1초 지연
     await Future.delayed(Duration(seconds: 1));
-
-    // 성공적으로 응답을 받았다고 가정하고, 인증 코드 반환
     print("AccountService: 계좌($accountNumber)로 인증 코드 '1234'를 요청했습니다. (Mock)");
     return "1234";
+  }
+
+  /// [Mock API] 최종 계좌 등록을 흉내 내는 임시 함수
+  Future<bool> registerAccount({
+    required String bank,
+    required String accountNumber,
+  }) async {
+    print("AccountService: [Mock] 서버로 데이터 전송 시도 -> Bank=$bank, Account=$accountNumber");
+    await Future.delayed(Duration(seconds: 1));
+    print("AccountService: [Mock] 계좌 등록 성공");
+    return true;
   }
 }
