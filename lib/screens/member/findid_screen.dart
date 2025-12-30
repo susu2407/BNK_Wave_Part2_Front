@@ -17,15 +17,25 @@ class _FindIdScreenState extends State<FindIdScreen> {
   bool _found = false;
   String _foundId = '';
 
-  void _findId() {
+  void _findId() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // TODO: 서버 연동 예정
-    // 임시 결과
-    setState(() {
-      _found = true;
-      _foundId = 'ab****23';
-    });
+    try {
+      final loginId = await service.findId(
+        _nameController.text,
+        _emailController.text,
+      );
+
+      setState(() {
+        _found = true;
+        _foundId = loginId;
+      });
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('일치하는 정보가 없습니다.')),
+      );
+    }
   }
 
   @override

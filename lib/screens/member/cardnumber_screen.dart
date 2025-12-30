@@ -1,145 +1,142 @@
 import 'package:flutter/material.dart';
 
-class CardNumberViewPage extends StatefulWidget {
-  const CardNumberViewPage({super.key});
-
-  @override
-  State<CardNumberViewPage> createState() => _CardNumberViewPageState();
-}
-
-class _CardNumberViewPageState extends State<CardNumberViewPage> {
-  final String cardNumber = '1234 5678 9012 3456';
-  final String validThru = '12/28';
-
-  bool showFullNumber = false;
-
-  Future<void> authenticateAndShow() async {
-    // 실제 서비스에서는 생체인증 / 비밀번호 인증 처리
-    setState(() {
-      showFullNumber = true;
-    });
-
-    // 10초 후 다시 마스킹
-    await Future.delayed(const Duration(seconds: 10));
-    if (!mounted) return;
-    setState(() {
-      showFullNumber = false;
-    });
-  }
-
-  String maskedNumber(String number) {
-    // 1234 **** **** 3456 형태
-    return number.replaceRange(5, 14, '**** ****');
-  }
+class CardViewPage extends StatelessWidget {
+  const CardViewPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('카드번호 확인'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text('내 카드'),
         centerTitle: true,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 카드 영역
+            /// 카드 이미지
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
+              width: 220,
+              height: 360,
               decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    '카카오뱅크 개인사업자 상생카드',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            /// 카드번호 영역
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey, width: 2),
+                color: Colors.grey.shade100,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '카드번호',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    showFullNumber
-                        ? cardNumber
-                        : maskedNumber(cardNumber),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '유효기간 $validThru',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
+              alignment: Alignment.center,
+              child: const Text(
+                '카드\n이미지',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
-            const Text(
-              '※ 카드번호 보호를 위해 CVC번호는 별도로 제공되지 않습니다.',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-              ),
-            ),
-
-            const Spacer(),
-
-            /// 확인 버튼
+            /// 카드명 버튼
             SizedBox(
               width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: authenticateAndShow,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+              height: 45,
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.grey),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: const Text(
-                  '확인',
-                  style: TextStyle(fontSize: 16),
+                  '카드명',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 6),
+
+            const Text(
+              '카드타입(신용, 체크)',
+              style: TextStyle(color: Colors.black),
+            ),
+
+            const SizedBox(height: 25),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Column(
+                children: [
+                  _infoRow(
+                    title: '카드 번호',
+                    value: '5274-****-****-3389',
+                  ),
+                  const Divider(),
+                  _infoRow(
+                    title: '유효 기간',
+                    value: 'YY/DD/MM',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            //버튼
+            SizedBox(
+              width: double.infinity,
+              height: 42,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  // TODO: 카드번호 전체 보기 로직
+                },
+                icon: const Icon(Icons.visibility, size: 18),
+                label: const Text(
+                  '카드 번호 보기',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey.shade400),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  /// 공통 정보 Row
+  Widget _infoRow({required String title, required String value}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

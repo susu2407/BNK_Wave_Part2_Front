@@ -11,24 +11,19 @@ class MemberService {
 
   Future<Map<String, dynamic>> login(String usid, String pass) async {
 
-    try {
-      final response = await http.post(
-          Uri.parse('$baseUrl/user/login'),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({
-            "usid": usid,
-            "pass": pass,
-          })
-      );
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'loginId': usid,
+        'password': pass,
+      }),
+    );
 
-      if(response.statusCode == 200){
-        return jsonDecode(response.body);
-      }else {
-        throw Exception(response.statusCode);
-      }
-
-    } catch(err){
-      throw Exception('예외발생 : $err');
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('로그인 실패');
     }
   }
 
@@ -49,6 +44,24 @@ class MemberService {
       }
     }catch (err){
       throw Exception('에러발생 : $err');
+    }
+  }
+
+  Future<String> findId(String name, String email) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/member/find-id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json['loginId'];
+    } else {
+      throw Exception('아이디를 찾을 수 없습니다.');
     }
   }
 
