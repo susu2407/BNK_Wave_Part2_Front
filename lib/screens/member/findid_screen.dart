@@ -20,7 +20,7 @@ class _FindIdScreenState extends State<FindIdScreen> {
   void _findId() async {
     if (!_formKey.currentState!.validate()) return;
 
-    try {
+    /*try {
       final loginId = await service.findId(
         _nameController.text,
         _emailController.text,
@@ -35,7 +35,7 @@ class _FindIdScreenState extends State<FindIdScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('일치하는 정보가 없습니다.')),
       );
-    }
+    }*/
   }
 
   @override
