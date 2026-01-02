@@ -1,17 +1,11 @@
 /*
   날짜 : 2025-12-24
   이름 : 이수연
-  내용 : 계좌 등록 - 2
-
-  - 선택한 카드 정보 불러오기
-  - 계좌 입력 폼 (은행 선택, 계좌 번호 입력)
-  - 입력 폼이 모두 작성되면, 하단 다음 버튼 활성화
-  - 다음 버튼 누르면, 계좌 정보 임시 저장 (본인 인증 마칠 때까지)
-  - 다음 버튼 클릭 시, 본인 인증 화면(card_account_verification_screen.dart)으로 이동
-
+  내용 : 계좌 등록 - 2 (단일 화면 흐름 적용)
 */
 
-import 'package:bnkpart2/screens/payment/card_account_verification_screen.dart';
+import 'package:bnkpart2/screens/payment/card_account_result_screen.dart';
+import 'package:bnkpart2/screens/payment/card_list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +31,8 @@ class _CardAccountInputView extends StatelessWidget {
 
   final AccountInputDto selectedCard;
 
+  static final TextEditingController _verificationCodeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AccountRegistrationProvider>();
@@ -44,30 +40,45 @@ class _CardAccountInputView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            // [수정] 계좌 등록 여부에 따라 다른 텍스트를 표시합니다.
-            Text(
-              selectedCard.bankName != "은행 정보 없음"
-                  ? "변경하실 결제계좌를\n입력해주세요."
-                  : "등록하실 결제계좌를\n입력해주세요.",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, height: 1.4)
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30),
+                  Text(
+                    selectedCard.bankName != null
+                        ? "변경하실 결제계좌를\n입력해주세요."
+                        : "등록하실 결제계좌를\n입력해주세요.",
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, height: 1.4)
+                  ),
+                  const SizedBox(height: 30),
+                  CardListItemWidget(
+                    cardName: selectedCard.cardName,
+                    cardType: selectedCard.cardType,
+                    cardNumber: selectedCard.cardNumber,
+                    paymentBank: selectedCard.bankName,
+                    paymentAccount: selectedCard.paymentAccount,
+                    cardImageUrl: selectedCard.cardImageUrl,
+                    isSelected: true,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 10),
+                  _buildInputForm(context),
+                  const SizedBox(height: 10),
+                  _buildAgreementSection(context),
+                  if (provider.isVerificationRequested)
+                    _buildVerificationForm(context),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
-            const SizedBox(height: 30),
-            _buildCardSummaryBox(),
-            const SizedBox(height: 20),
-            _buildInputForm(context),
-            const SizedBox(height: 20),
-            _buildAgreementSection(context),
-            const Spacer(),
-            _buildNextButton(context),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          _buildNextButton(context),
+        ],
       ),
     );
   }
@@ -88,50 +99,6 @@ class _CardAccountInputView extends StatelessWidget {
           onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
         ),
       ],
-    );
-  }
-
-  Widget _buildCardSummaryBox() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400, width: 2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Image.network(
-            selectedCard.cardImageUrl,
-            width: 60,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: 60,
-              height: 100,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Center(child: Text("카드\n이미지", textAlign: TextAlign.center, style: TextStyle(fontSize: 10))),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                selectedCard.cardName,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                selectedCard.bankName,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -163,9 +130,30 @@ class _CardAccountInputView extends StatelessWidget {
             decoration: const InputDecoration(border: OutlineInputBorder(), hintText: "'-'없이 입력", contentPadding: EdgeInsets.symmetric(horizontal: 12)),
             onChanged: (value) => provider.setPaymentAccountNumber(value),
           ),
-          const SizedBox(height: 15),
-          const Text("• 본인 명의의 계좌로만 변경 가능합니다.", style: TextStyle(fontSize: 11, color: Colors.grey)),
-          const Text("• 구.외환은행 계좌의 경우, 하나은행을 선택해 주세요.", style: TextStyle(fontSize: 11, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVerificationForm(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade400, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("인증번호", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _verificationCodeController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(border: OutlineInputBorder(), hintText: "계좌에 입금된 숫자 4자리", contentPadding: EdgeInsets.symmetric(horizontal: 12)),
+          ),
         ],
       ),
     );
@@ -195,12 +183,23 @@ class _CardAccountInputView extends StatelessWidget {
   Widget _buildAgreementRow({required String title, required bool value, required ValueChanged<bool?> onChanged, required VoidCallback onTapDetail}) {
     return Row(
       children: [
-        Checkbox(value: value, onChanged: onChanged, activeColor: Colors.black),
-        Text(title, style: TextStyle(fontSize: 14)),
+        GestureDetector(
+          onTap: () => onChanged(!value),
+          behavior: HitTestBehavior.translucent,
+          child: Row(
+            children: [
+              Checkbox(value: value, onChanged: onChanged, activeColor: Colors.black),
+              Text(title, style: const TextStyle(fontSize: 14)),
+            ],
+          ),
+        ),
         const Spacer(),
         GestureDetector(
           onTap: onTapDetail,
-          child: const Text("보기", style: TextStyle(color: Colors.grey, fontSize: 13, decoration: TextDecoration.underline)),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            child: Text("보기", style: TextStyle(color: Colors.grey, fontSize: 13, decoration: TextDecoration.underline)),
+          ),
         ),
       ],
     );
@@ -226,30 +225,60 @@ class _CardAccountInputView extends StatelessWidget {
 
     final isInputValid = provider.paymentBank != null && (provider.paymentAccountNumber?.isNotEmpty ?? false);
     final allAgreed = provider.agreedToPersonal && provider.agreedToThirdParty;
-    final isValid = isInputValid && allAgreed;
+    final isRequestValid = isInputValid && allAgreed;
+    final isSubmitValid = _verificationCodeController.text.length == 4;
 
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton(
-        onPressed: (isValid && !provider.isLoading) ? () async {
-          await notifier.requestVerificationCode();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CardAccountVerificationScreen(selectedCard: selectedCard),
+    final bool isVerificationMode = provider.isVerificationRequested;
+    final String buttonText = isVerificationMode ? '확인 및 등록' : '인증번호 요청';
+    final bool isButtonEnabled = isVerificationMode ? isSubmitValid : isRequestValid;
+
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(24, 12, 24, 30),
+        child: SizedBox(
+            width: double.infinity,
+            height: 58,
+            child: ElevatedButton(
+              onPressed: (isButtonEnabled && !provider.isLoading) ? () async {
+                if (isVerificationMode) {
+                  final success = await notifier.submitAndRegister(_verificationCodeController.text);
+                  if (context.mounted && success) {
+                    // [수정] 결과 화면으로 이동
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => CardAccountResultScreen(
+                          registeredCardInfo: selectedCard,
+                          newBankName: provider.paymentBank!,
+                          newAccountNumber: provider.paymentAccountNumber!,
+                        ),
+                      ),
+                      (route) => route.isFirst,
+                    );
+                    // [추가] 등록 성공 후 컨트롤러의 텍스트를 깨끗하게 비웁니다.
+                    _verificationCodeController.clear();
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('인증번호가 일치하지 않습니다.')));
+                  }
+                } else {
+                  await notifier.requestVerification();
+                }
+              } : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFCB2B11),
+                disabledBackgroundColor: Colors.grey.shade300,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
+              child: provider.isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text(buttonText,
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white
+                                )
+              ),
             ),
-          );
-        } : null,
-        style: OutlinedButton.styleFrom(
-            side: BorderSide(color: isValid ? Colors.black : Colors.grey.shade400, width: 2),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            backgroundColor: isValid ? Colors.red : Colors.grey.shade200,
         ),
-        child: provider.isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text("다음", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
-      ),
     );
   }
 }

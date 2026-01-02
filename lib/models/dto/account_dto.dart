@@ -1,52 +1,39 @@
 /*
   날짜 : 2025-12-24
   이름 : 이수연
-
   내용 : 카드 목록 및 계좌 등록에 필요한 DTO
 */
 
-import '../entity/card_basic.dart';
-import '../entity/member_card.dart';
-
-/// 화면(UI)에 데이터를 뿌려주기 위해
-/// 두 개의 Entity를 하나로 합친 데이터 전송 객체(DTO)
-class CardViewDto {
-  final CardBasic basic;    // 카드 상품 공통 정보 (카드명, 이미지 등)
-  final MemberCard member;  // 사용자 개인 보유 정보 (계좌번호, 카드번호 등)
-
-  CardViewDto({
-    required this.basic,
-    required this.member,
-  });
-
-  // [식별자] 카드 고유 ID (PK)
-  int get cardId => basic.cardId;
-
-  // [이미지] 카드 이미지 경로
-  String get imageUrl => basic.cardImageUrl;
-}
-
-/// 계좌 등록 화면으로 이동할 때, 선택된 카드의 정보를 전달하기 위한 DTO
+/// 계좌 등록 화면(Input Screen)이 카드 정보를 표시하는 데 필요한 모든 데이터를 전달하는 DTO.
 class AccountInputDto {
-  final int cardId; // 어느 카드에 계좌를 등록할지 식별
+  final int cardId;
   final String cardName;
-  final String bankName; // 카드 발급 은행
+  final String? bankName;
   final String cardImageUrl;
+  final String cardType;
+  final String cardNumber;
+  final String? paymentAccount; // 기존 계좌번호 표시를 위한 필드
 
   AccountInputDto({
     required this.cardId,
     required this.cardName,
-    required this.bankName,
+    this.bankName,
     required this.cardImageUrl,
+    required this.cardType,
+    required this.cardNumber,
+    this.paymentAccount, // required가 아님 (null일 수 있으므로)
   });
 
-  /// CardViewDto로부터 AccountInputDto를 생성
-  factory AccountInputDto.fromCardView(CardViewDto cardView) {
+  // card_selection_screen의 더미 데이터 형식에 맞춤
+  factory AccountInputDto.fromMap(Map<String, dynamic> cardData) {
     return AccountInputDto(
-      cardId: cardView.cardId,
-      cardName: cardView.basic.cardName,
-      bankName: cardView.basic.bankName,
-      cardImageUrl: cardView.imageUrl,
+      cardId: cardData['MEMBER_CARD_ID'],
+      cardName: cardData['CARD_NAME'],
+      bankName: cardData['PAYMENT_BANK'],
+      cardImageUrl: cardData['CARD_IMAGE_URL'],
+      cardType: cardData['CARD_TYPE'],
+      cardNumber: cardData['CARD_NUMBER'],
+      paymentAccount: cardData['PAYMENT_ACCOUNT'],
     );
   }
 }
